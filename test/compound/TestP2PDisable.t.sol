@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: AGPL-3.0-only
+// SPDX-License-Identifier: GNU AGPLv3
 pragma solidity ^0.8.0;
 
 import "./setup/TestSetup.sol";
@@ -91,9 +91,18 @@ contract TestP2PDisable is TestSetup {
 
         // Pause borrow on pool.
         vm.prank(comptroller.admin());
-        comptroller._setMintPaused(ICToken(cDai), true);
+        // comptroller._setMintPaused(ICToken(cDai), true);
+
+        address[] memory markets = new address[](1);
+        uint8[] memory actions = new uint8[](1);
+        markets[0] = address(cDai);
+        actions[0] = 0;
+
+        comptroller._setActionsPaused(markets, actions, true);
         vm.prank(comptroller.admin());
-        comptroller._setBorrowPaused(ICToken(cDai), true);
+        // comptroller._setBorrowPaused(ICToken(cDai), true);
+        actions[0] = 2;
+        comptroller._setActionsPaused(markets, actions, true);
 
         // Withdraw and repay peer-to-peer matched positions.
         supplier1.withdraw(cDai, amount - 1e9);

@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: AGPL-3.0-only
+// SPDX-License-Identifier: GNU AGPLv3
 pragma solidity ^0.8.0;
 
 import "./setup/TestSetup.sol";
@@ -20,7 +20,7 @@ contract TestGovernance is TestSetup {
     function testShouldRevertWhenCreatingMarketWithAnImproperMarket() public {
         Types.MarketParameters memory marketParams = Types.MarketParameters(3_333, 0);
 
-        hevm.expectRevert(abi.encodeWithSignature("MarketCreationFailedOnCompound()"));
+        hevm.expectRevert("market not listed");
         morpho.createMarket(address(supplier1), marketParams);
     }
 

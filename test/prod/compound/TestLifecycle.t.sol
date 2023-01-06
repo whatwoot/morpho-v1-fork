@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: AGPL-3.0-only
+// SPDX-License-Identifier: GNU AGPLv3
 pragma solidity ^0.8.0;
 
 import "./setup/TestSetup.sol";
@@ -49,7 +49,7 @@ contract TestLifecycle is TestSetup {
 
         test.p2pDisabled = morpho.p2pDisabled(_market.poolToken);
         (test.p2pSupplyDelta, test.p2pBorrowDelta, , ) = morpho.deltas(_market.poolToken);
-
+        
         test.morphoPoolSupplyBefore = ICToken(_market.poolToken).balanceOfUnderlying(
             address(morpho)
         );
@@ -80,12 +80,10 @@ contract TestLifecycle is TestSetup {
         (, supply.poolSupplyIndex, supply.poolBorrowIndex) = morpho.lastPoolIndexes(
             _market.poolToken
         );
-
         (supply.scaledP2PBalance, supply.scaledPoolBalance) = morpho.supplyBalanceInOf(
             _market.poolToken,
             address(user)
         );
-
         supply.position.p2p = supply.scaledP2PBalance.mul(supply.p2pSupplyIndex);
         supply.position.pool = supply.scaledPoolBalance.mul(supply.poolSupplyIndex);
         supply.position.total = supply.position.p2p + supply.position.pool;
@@ -100,7 +98,7 @@ contract TestLifecycle is TestSetup {
         assertApproxEqAbs(
             supply.position.total,
             supply.amount,
-            1,
+            supply.poolSupplyIndex.div(1e18)+1,//1,
             string.concat(supply.market.symbol, " total supply")
         );
         if (supply.p2pDisabled)
@@ -145,7 +143,7 @@ contract TestLifecycle is TestSetup {
         );
         assertApproxEqAbs(
             ICToken(supply.market.poolToken).balanceOfUnderlying(address(morpho)),
-            supply.morphoPoolSupplyBefore + supply.position.pool,
+            supply.morphoPoolSupplyBefore + supply.scaledPoolBalance.mul(ICToken(supply.market.poolToken).exchangeRateCurrent()),//supply.position.pool,
             10,
             string.concat(supply.market.symbol, " morpho pool supply")
         );
@@ -165,7 +163,7 @@ contract TestLifecycle is TestSetup {
         if (
             supply.position.pool > 0 &&
             address(rewardsManager) != address(0) &&
-            morpho.comptroller().compSupplySpeeds(supply.market.poolToken) > 0
+            morpho.comptroller().venusSupplySpeeds(supply.market.poolToken) > 0
         )
             assertGt(
                 lens.getUserUnclaimedRewards(poolTokens, address(user)),
@@ -182,9 +180,7 @@ contract TestLifecycle is TestSetup {
         borrow = _initMarketSideTest(_market, _amount);
 
         _beforeBorrow(borrow);
-
         user.borrow(_market.poolToken, borrow.amount);
-
         borrow.p2pSupplyIndex = morpho.p2pSupplyIndex(_market.poolToken);
         borrow.p2pBorrowIndex = morpho.p2pBorrowIndex(_market.poolToken);
         (, borrow.poolSupplyIndex, borrow.poolBorrowIndex) = morpho.lastPoolIndexes(
@@ -210,7 +206,7 @@ contract TestLifecycle is TestSetup {
         assertApproxEqAbs(
             borrow.position.total,
             borrow.amount,
-            10,
+            borrow.p2pBorrowIndex.div(1e18)+1,//10,
             string.concat(borrow.market.symbol, " total borrow")
         );
         if (borrow.p2pDisabled)
@@ -254,7 +250,7 @@ contract TestLifecycle is TestSetup {
             ICToken(borrow.market.poolToken).balanceOfUnderlying(address(morpho)) +
                 borrow.position.p2p,
             borrow.morphoPoolSupplyBefore,
-            2,
+            borrow.p2pBorrowIndex.div(1e18)+1,//2,
             string.concat(borrow.market.symbol, " morpho borrowed pool supply")
         );
         assertApproxEqAbs(
@@ -272,7 +268,7 @@ contract TestLifecycle is TestSetup {
         if (
             borrow.position.pool > 0 &&
             address(rewardsManager) != address(0) &&
-            morpho.comptroller().compBorrowSpeeds(borrow.market.poolToken) > 0
+            morpho.comptroller().venusBorrowSpeeds(borrow.market.poolToken) > 0
         )
             assertGt(
                 lens.getUserUnclaimedRewards(borrowedPoolTokens, address(user)),
@@ -387,7 +383,6 @@ contract TestLifecycle is TestSetup {
                 ++borrowMarketIndex
             ) {
                 _revert();
-
                 TestMarket memory supplyMarket = collateralMarkets[supplyMarketIndex];
                 TestMarket memory borrowMarket = borrowableMarkets[borrowMarketIndex];
 

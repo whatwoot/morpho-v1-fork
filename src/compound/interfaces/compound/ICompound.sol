@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: AGPL-3.0-only
+// SPDX-License-Identifier: GNU AGPLv3
 pragma solidity >=0.5.0;
 
 interface ICEth {
@@ -214,37 +214,48 @@ interface IComptroller {
 
     function seizeGuardianPaused() external view returns (bool);
 
-    function claimComp(address holder) external;
+    function claimVenus(address holder) external;
 
-    function claimComp(address holder, address[] memory cTokens) external;
+    function claimVenus(address holder, address[] memory cTokens) external;
 
     function compSpeeds(address) external view returns (uint256);
 
-    function compSupplySpeeds(address) external view returns (uint256);
+    function venusSpeeds(address) external view returns (uint256);
 
-    function compBorrowSpeeds(address) external view returns (uint256);
+    function venusSupplySpeeds(address) external view returns (uint256);
+    function venusBorrowSpeeds(address) external view returns (uint256);
+    function actionPaused(address market, uint256 action) external view returns (bool);
 
-    function compSupplyState(address) external view returns (CompMarketState memory);
+    // function venusSpeeds(address) external view returns (uint256);
 
-    function compBorrowState(address) external view returns (CompMarketState memory);
+    function venusSupplyState(address) external view returns (CompMarketState memory);
 
-    function getCompAddress() external view returns (address);
+    function venusBorrowState(address) external view returns (CompMarketState memory);
+
+    function getXVSAddress() external view returns (address);
 
     function _setPriceOracle(address newOracle) external returns (uint256);
 
     function _setMintPaused(ICToken cToken, bool state) external returns (bool);
+
+    function _setActionsPaused(
+        address[] calldata markets,
+        uint8[] calldata actions,
+        bool paused
+    ) external;
 
     function _setBorrowPaused(ICToken cToken, bool state) external returns (bool);
 
     function _setCollateralFactor(ICToken cToken, uint256 newCollateralFactorMantissa)
         external
         returns (uint256);
-
-    function _setCompSpeeds(
-        ICToken[] memory cTokens,
-        uint256[] memory supplySpeeds,
-        uint256[] memory borrowSpeeds
-    ) external;
+    function _setVenusSpeed(ICToken cToken, uint venusSpeed) external;
+    // function _setCompSpeeds(
+    //     ICToken[] memory cTokens,
+    //     uint256[] memory supplySpeeds,
+    //     uint256[] memory borrowSpeeds
+    // ) external;
+    function treasuryPercent() external view returns (uint);
 }
 
 interface IInterestRateModel {
@@ -334,6 +345,8 @@ interface ICToken {
     function mint(uint256) external returns (uint256);
 
     function redeemUnderlying(uint256) external returns (uint256);
+
+    function redeem(uint redeemTokens) external returns (uint);
 
     function accrueInterest() external returns (uint256);
 

@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: AGPL-3.0-only
+// SPDX-License-Identifier: GNU AGPLv3
 pragma solidity 0.8.13;
 
 import "src/compound/interfaces/IRewardsManager.sol";
@@ -19,6 +19,7 @@ import {Lens} from "src/compound/lens/Lens.sol";
 
 import "@config/Config.sol";
 import "forge-std/Script.sol";
+import "@forge-std/console.sol";
 
 contract Deploy is Script, Config {
     ProxyAdmin public proxyAdmin;
@@ -31,16 +32,18 @@ contract Deploy is Script, Config {
     RewardsManager public rewardsManager;
 
     function run() external {
+        console.log("chain:",block.chainid);
         vm.label(comptroller, "Comptroller");
         vm.label(cDai, "cDAI");
         vm.label(cEth, "cETH");
+        vm.label(cAave, "cAAVE");
         vm.label(cUsdc, "cUSDC");
-        vm.label(cWbtc2, "cWBTC");
-        vm.label(cBat, "cBAT");
+        // vm.label(cWbtc2, "cWBTC");
+        // vm.label(cBat, "cBAT");
         vm.label(wEth, "WETH");
 
-        vm.startBroadcast();
-
+        uint256 deployerPrivateKey = vm.envUint("DEPLOYER_PRIVATE_KEY");
+        vm.startBroadcast(deployerPrivateKey);
         proxyAdmin = new ProxyAdmin();
 
         // Deploy Morpho's dependencies
@@ -79,7 +82,8 @@ contract Deploy is Script, Config {
         morpho.setRewardsManager(IRewardsManager(address(rewardsManager)));
 
         // Deploy Lens
-        Lens lensImpl = new Lens(address(morpho));
+        // Lens lensImpl = new Lens(address(morpho));
+        Lens lensImpl = new Lens();
         TransparentUpgradeableProxy lensProxy = new TransparentUpgradeableProxy(
             address(lensImpl),
             address(proxyAdmin),
@@ -95,8 +99,9 @@ contract Deploy is Script, Config {
         morpho.createMarket(cDai, defaultMarketParameters);
         morpho.createMarket(cUsdc, defaultMarketParameters);
         morpho.createMarket(cEth, defaultMarketParameters);
-        morpho.createMarket(cWbtc2, defaultMarketParameters);
-        morpho.createMarket(cBat, defaultMarketParameters);
+        morpho.createMarket(cAave, defaultMarketParameters);
+        // morpho.createMarket(cWbtc2, defaultMarketParameters);
+        // morpho.createMarket(cBat, defaultMarketParameters);
 
         vm.stopBroadcast();
     }

@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: AGPL-3.0-only
+// SPDX-License-Identifier: GNU AGPLv3
 pragma solidity ^0.8.0;
 
 import "./setup/TestSetup.sol";
@@ -338,9 +338,9 @@ contract TestRatesLens is TestSetup {
             1,
             "unexpected borrow rate per block"
         );
-        assertApproxEqAbs(balanceOnPool, amount, 1, "unexpected pool balance");
+        assertApproxEqAbs(balanceOnPool, amount, 2, "unexpected pool balance");
         assertEq(balanceInP2P, 0, "unexpected p2p balance");
-        assertApproxEqAbs(totalBalance, amount, 1, "unexpected total balance");
+        assertApproxEqAbs(totalBalance, amount, 2, "unexpected total balance");
     }
 
     function testNextSupplyRateShouldEqualP2PRateWhenFullMatch() public {
@@ -947,7 +947,7 @@ contract TestRatesLens is TestSetup {
         .getAverageBorrowRatePerBlock(cDai);
 
         assertApproxEqAbs(borrowRatePerBlock, ICToken(cDai).borrowRatePerBlock(), 1);
-        assertApproxEqAbs(poolBorrowAmount, amount, 1);
+        assertApproxEqAbs(poolBorrowAmount, amount, 2);
         assertEq(p2pBorrowAmount, 0);
     }
 

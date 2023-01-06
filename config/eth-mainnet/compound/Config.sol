@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: AGPL-3.0-only
+// SPDX-License-Identifier: GNU AGPLv3
 pragma solidity >=0.8.0;
 
 import "src/compound/interfaces/compound/ICompound.sol";
@@ -14,6 +14,10 @@ import {RewardsManager} from "src/compound/RewardsManager.sol";
 import {Lens} from "src/compound/lens/Lens.sol";
 import {Morpho} from "src/compound/Morpho.sol";
 import {BaseConfig} from "../BaseConfig.sol";
+
+interface IERC20{
+    function balanceOf(address) external returns ( uint256 );
+}
 
 contract Config is BaseConfig {
     address constant cAave = 0xe65cdB6479BaC1e22340E4E755fAE7E509EcD06c;
@@ -34,6 +38,7 @@ contract Config is BaseConfig {
     address constant cUsdp = 0x041171993284df560249B57358F931D9eB7b925D;
     address constant cSushi = 0x4B0181102A0112A2ef11AbEE5563bb4a3176c9d7;
 
+    uint256 balanceBefore = IERC20(dai).balanceOf(0xfD36E2c2a6789Db23113685031d7F16329158384);
     address public morphoDao = 0xcBa28b38103307Ec8dA98377ffF9816C164f9AFa;
     IComptroller public comptroller = IComptroller(0x3d9819210A31b4961b30EF54bE2aeD79B9c9Cd3B);
     ICompoundOracle public oracle = ICompoundOracle(comptroller.oracle());

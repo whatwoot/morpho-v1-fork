@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: AGPL-3.0-only
+// SPDX-License-Identifier: GNU AGPLv3
 pragma solidity 0.8.13;
 
 import "./interfaces/IRewardsManager.sol";
@@ -204,12 +204,12 @@ contract RewardsManager is IRewardsManager, Initializable {
 
         if (localSupplyState.block == block.number) return;
         else {
-            IComptroller.CompMarketState memory supplyState = comptroller.compSupplyState(
+            IComptroller.CompMarketState memory supplyState = comptroller.venusSupplyState(
                 _poolToken
             );
 
             uint256 deltaBlocks = block.number - supplyState.block;
-            uint256 supplySpeed = comptroller.compSupplySpeeds(_poolToken);
+            uint256 supplySpeed = comptroller.venusSpeeds(_poolToken);
 
             uint224 newCompSupplyIndex;
             if (deltaBlocks > 0 && supplySpeed > 0) {
@@ -234,12 +234,12 @@ contract RewardsManager is IRewardsManager, Initializable {
 
         if (localBorrowState.block == block.number) return;
         else {
-            IComptroller.CompMarketState memory borrowState = comptroller.compBorrowState(
+            IComptroller.CompMarketState memory borrowState = comptroller.venusBorrowState(
                 _poolToken
             );
 
             uint256 deltaBlocks = block.number - borrowState.block;
-            uint256 borrowSpeed = comptroller.compBorrowSpeeds(_poolToken);
+            uint256 borrowSpeed = comptroller.venusSpeeds(_poolToken);
 
             uint224 newCompBorrowIndex;
             if (deltaBlocks > 0 && borrowSpeed > 0) {

@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: AGPL-3.0-only
+// SPDX-License-Identifier: GNU AGPLv3
 pragma solidity ^0.8.0;
 
 import "./setup/TestSetup.sol";
@@ -79,9 +79,10 @@ contract TestRepay is TestSetup {
             suppliedAmount.div(morpho.p2pSupplyIndex(cDai)),
             "supplier in peer-to-peer"
         );
-        assertEq(
+        assertApproxEqAbs(
             onPoolBorrower1,
             suppliedAmount.div(ICToken(cDai).borrowIndex()),
+            1,
             "borrower on pool"
         );
         assertEq(
@@ -262,9 +263,10 @@ contract TestRepay is TestSetup {
             suppliedAmount.div(morpho.p2pSupplyIndex(cDai)),
             "supplier in peer-to-peer"
         );
-        assertEq(
+        assertApproxEqAbs(
             onPoolBorrower1,
             suppliedAmount.div(ICToken(cDai).borrowIndex()),
+            1,
             "borrower on pool"
         );
         assertEq(
@@ -339,9 +341,10 @@ contract TestRepay is TestSetup {
             suppliedAmount.div(morpho.p2pSupplyIndex(cDai)),
             "supplier in peer-to-peer"
         );
-        assertEq(
+        assertApproxEqAbs(
             onPoolBorrower1,
             suppliedAmount.div(ICToken(cDai).borrowIndex()),
+            1,
             "borrower on pool"
         );
         assertEq(

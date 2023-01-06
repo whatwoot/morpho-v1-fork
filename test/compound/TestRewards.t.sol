@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: AGPL-3.0-only
+// SPDX-License-Identifier: GNU AGPLv3
 pragma solidity ^0.8.0;
 
 import "./setup/TestSetup.sol";
@@ -16,7 +16,7 @@ contract TestRewards is TestSetup {
         cTokens[0] = cDai;
         uint256 unclaimedRewards = lens.getUserUnclaimedRewards(cTokens, address(supplier1));
 
-        uint256 index = comptroller.compSupplyState(cDai).index;
+        uint256 index = comptroller.venusSupplyState(cDai).index;
 
         testEquality(userIndex, index, "user index wrong");
         assertEq(unclaimedRewards, 0, "unclaimed rewards should be 0");
@@ -27,7 +27,7 @@ contract TestRewards is TestSetup {
         hevm.roll(block.number + 1_000);
         uint256 claimedAmount = supplier1.claimRewards(cTokens, false);
 
-        index = comptroller.compSupplyState(cDai).index;
+        index = comptroller.venusSupplyState(cDai).index;
 
         uint256 expectedClaimed = (onPool * (index - userIndex)) / 1e36;
         uint256 balanceAfter = supplier1.balanceOf(comp);
@@ -52,7 +52,7 @@ contract TestRewards is TestSetup {
         supplier1.approve(dai, toSupply);
         supplier1.supply(cDai, toSupply);
 
-        uint256 index = comptroller.compSupplyState(cDai).index;
+        uint256 index = comptroller.venusSupplyState(cDai).index;
 
         (, uint256 onPool) = morpho.supplyBalanceInOf(cDai, address(supplier1));
         uint256 userIndex = rewardsManager.compSupplierIndex(cDai, address(supplier1));
@@ -70,7 +70,7 @@ contract TestRewards is TestSetup {
         unclaimedRewards = lens.getUserUnclaimedRewards(cTokens, address(supplier1));
 
         uint256 claimedAmount = supplier1.claimRewards(cTokens, false);
-        index = comptroller.compSupplyState(cDai).index;
+        index = comptroller.venusSupplyState(cDai).index;
 
         uint256 expectedClaimed = (onPool * (index - userIndex)) / 1e36;
         assertEq(claimedAmount, expectedClaimed, "unexpected claimed amount");
@@ -83,7 +83,7 @@ contract TestRewards is TestSetup {
         supplier1.supply(cDai, toSupply);
         supplier1.borrow(cUsdc, to6Decimals(50 ether));
 
-        uint256 index = comptroller.compBorrowState(cUsdc).index;
+        uint256 index = comptroller.venusBorrowState(cUsdc).index;
 
         (, uint256 onPool) = morpho.borrowBalanceInOf(cUsdc, address(supplier1));
         uint256 userIndex = rewardsManager.compBorrowerIndex(cUsdc, address(supplier1));
@@ -98,7 +98,7 @@ contract TestRewards is TestSetup {
         hevm.roll(block.number + 1_000);
         uint256 claimedAmount = supplier1.claimRewards(cTokens, false);
 
-        index = comptroller.compBorrowState(cUsdc).index;
+        index = comptroller.venusBorrowState(cUsdc).index;
 
         uint256 expectedClaimed = (onPool * (index - userIndex)) / 1e36;
         uint256 balanceAfter = supplier1.balanceOf(comp);
@@ -113,7 +113,7 @@ contract TestRewards is TestSetup {
         supplier1.supply(cDai, toSupply);
         supplier1.borrow(cUsdc, to6Decimals(50 ether));
 
-        uint256 index = comptroller.compBorrowState(cUsdc).index;
+        uint256 index = comptroller.venusBorrowState(cUsdc).index;
 
         (, uint256 onPool) = morpho.borrowBalanceInOf(cUsdc, address(supplier1));
         uint256 userIndex = rewardsManager.compBorrowerIndex(cUsdc, address(supplier1));
@@ -129,7 +129,7 @@ contract TestRewards is TestSetup {
         unclaimedRewards = lens.getUserUnclaimedRewards(cTokens, address(supplier1));
 
         uint256 claimedAmount = supplier1.claimRewards(cTokens, false);
-        index = comptroller.compBorrowState(cUsdc).index;
+        index = comptroller.venusBorrowState(cUsdc).index;
 
         uint256 expectedClaimed = (onPool * (index - userIndex)) / 1e36;
         assertEq(claimedAmount, expectedClaimed, "unexpected claimed amount");
@@ -332,7 +332,7 @@ contract TestRewards is TestSetup {
         hevm.roll(block.number + 1_000);
         uint256 claimedAmount = supplier1.claimRewards(cTokens, true);
 
-        uint256 index = comptroller.compSupplyState(cDai).index;
+        uint256 index = comptroller.venusSupplyState(cDai).index;
         uint256 expectedClaimed = (onPool * (index - userIndex)) / 1e36;
         uint256 expectedMorphoTokens = (expectedClaimed * 11_000) / 10_000; // 10% bonus with a dumb oracle 1:1 exchange from COMP to MORPHO.
 
@@ -408,7 +408,7 @@ contract TestRewards is TestSetup {
         supplier1.borrow(cDai, amount / 2);
 
         uint256 userIndexAfter = rewardsManager.compSupplierIndex(cDai, address(supplier1));
-        IComptroller.CompMarketState memory compoundAfter = comptroller.compSupplyState(cDai);
+        IComptroller.CompMarketState memory compoundAfter = comptroller.venusSupplyState(cDai);
 
         assertEq(userIndexAfter, compoundAfter.index);
     }
@@ -425,13 +425,14 @@ contract TestRewards is TestSetup {
         uint256[] memory supplySpeeds = new uint256[](1);
         uint256[] memory borrowSpeeds = new uint256[](1);
         cTokens[0] = ICToken(cDai);
-        comptroller._setCompSpeeds(cTokens, supplySpeeds, borrowSpeeds);
+        comptroller._setVenusSpeed(ICToken(cDai), 0);
+        // comptroller._setCompSpeeds(cTokens, supplySpeeds, borrowSpeeds);
         hevm.roll(block.number + 1);
 
         supplier1.borrow(cDai, amount / 2);
 
         uint256 userIndexAfter = rewardsManager.compSupplierIndex(cDai, address(supplier1));
-        IComptroller.CompMarketState memory compoundAfter = comptroller.compSupplyState(cDai);
+        IComptroller.CompMarketState memory compoundAfter = comptroller.venusSupplyState(cDai);
 
         assertEq(userIndexAfter, compoundAfter.index);
     }
@@ -453,7 +454,7 @@ contract TestRewards is TestSetup {
         borrower1.supply(cDai, amount / 2);
 
         uint256 userIndexAfter = rewardsManager.compBorrowerIndex(cDai, address(borrower1));
-        IComptroller.CompMarketState memory compoundAfter = comptroller.compBorrowState(cDai);
+        IComptroller.CompMarketState memory compoundAfter = comptroller.venusBorrowState(cDai);
 
         assertEq(userIndexAfter, compoundAfter.index);
     }
@@ -471,14 +472,15 @@ contract TestRewards is TestSetup {
         uint256[] memory supplySpeeds = new uint256[](1);
         uint256[] memory borrowSpeeds = new uint256[](1);
         cTokens[0] = ICToken(cDai);
-        comptroller._setCompSpeeds(cTokens, supplySpeeds, borrowSpeeds);
+        comptroller._setVenusSpeed(ICToken(cDai), 0);
+        // comptroller._setCompSpeeds(cTokens, supplySpeeds, borrowSpeeds);
         hevm.roll(block.number + 1);
 
         borrower1.approve(dai, type(uint256).max);
         borrower1.supply(cDai, amount / 2);
 
         uint256 userIndexAfter = rewardsManager.compBorrowerIndex(cDai, address(borrower1));
-        IComptroller.CompMarketState memory compoundAfter = comptroller.compBorrowState(cDai);
+        IComptroller.CompMarketState memory compoundAfter = comptroller.venusBorrowState(cDai);
 
         assertEq(userIndexAfter, compoundAfter.index);
     }
@@ -497,7 +499,7 @@ contract TestRewards is TestSetup {
         uint256 updatedIndex = lens.getCurrentCompSupplyIndex(cDai);
 
         supplier1.compoundSupply(cDai, amount / 10); // Update compSupplyState.
-        IComptroller.CompMarketState memory compoundAfter = comptroller.compSupplyState(cDai);
+        IComptroller.CompMarketState memory compoundAfter = comptroller.venusSupplyState(cDai);
 
         assertEq(updatedIndex, compoundAfter.index);
     }
@@ -518,8 +520,8 @@ contract TestRewards is TestSetup {
         ICToken(cDai).accrueInterest();
         uint256 updatedIndex = lens.getCurrentCompBorrowIndex(cDai);
 
-        borrower1.compoundBorrow(cDai, amount / 10); // Update compBorrowState.
-        IComptroller.CompMarketState memory compoundAfter = comptroller.compBorrowState(cDai);
+        borrower1.compoundBorrow(cDai, amount / 100); // Update compBorrowState.
+        IComptroller.CompMarketState memory compoundAfter = comptroller.venusBorrowState(cDai);
 
         assertEq(updatedIndex, compoundAfter.index);
     }

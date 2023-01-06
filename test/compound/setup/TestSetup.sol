@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: AGPL-3.0-only
+// SPDX-License-Identifier: GNU AGPLv3
 pragma solidity ^0.8.0;
 
 import "src/compound/interfaces/IMorpho.sol";
@@ -168,8 +168,8 @@ contract TestSetup is Config, Utils {
         deal(dai, address(_user), INITIAL_BALANCE * WAD);
         deal(wEth, address(_user), INITIAL_BALANCE * WAD);
         deal(bat, address(_user), INITIAL_BALANCE * WAD);
-        deal(usdt, address(_user), INITIAL_BALANCE * 1e6);
-        deal(usdc, address(_user), INITIAL_BALANCE * 1e6);
+        deal(usdt, address(_user), INITIAL_BALANCE * WAD);//1e6);
+        deal(usdc, address(_user), INITIAL_BALANCE * WAD);//1e6);
     }
 
     function setContractsLabels() internal {

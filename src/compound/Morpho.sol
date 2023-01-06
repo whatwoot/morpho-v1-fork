@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: AGPL-3.0-only
+// SPDX-License-Identifier: GNU AGPLv3
 pragma solidity 0.8.13;
 
 import "./MorphoGovernance.sol";
@@ -157,9 +157,9 @@ contract Morpho is MorphoGovernance {
         amountOfRewards = rewardsManager.claimRewards(_cTokenAddresses, msg.sender);
 
         if (amountOfRewards > 0) {
-            ERC20 comp = ERC20(comptroller.getCompAddress());
+            ERC20 comp = ERC20(comptroller.getXVSAddress());
 
-            comptroller.claimComp(address(this), _cTokenAddresses);
+            comptroller.claimVenus(address(this), _cTokenAddresses);
 
             if (_tradeForMorphoToken) {
                 comp.safeApprove(address(incentivesVault), amountOfRewards);

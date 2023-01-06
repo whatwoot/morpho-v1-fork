@@ -25,6 +25,10 @@ install:
 
 	chmod +x ./scripts/**/*.sh
 
+deploy-bsctest:
+	@echo Deploying Morpho-${PROTOCOL}-${NETWORK}
+	@forge script scripts/compound/Deploy.s.sol:Deploy --broadcast
+
 deploy:
 	@echo Deploying Morpho-${PROTOCOL}-${NETWORK}
 	./scripts/${PROTOCOL}/deploy.sh

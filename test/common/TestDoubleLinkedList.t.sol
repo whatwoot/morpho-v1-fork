@@ -1,9 +1,10 @@
-// SPDX-License-Identifier: AGPL-3.0-only
+// SPDX-License-Identifier: GNU AGPLv3
 pragma solidity ^0.8.0;
 
 import "@forge-std/Test.sol";
 
-import "src/compound/libraries/DoubleLinkedList.sol";
+// import "src/compound/libraries/DoubleLinkedList.sol";
+import "@morpho-dao/morpho-data-structures/DoubleLinkedList.sol";
 
 contract TestDoubleLinkedList is Test {
     using DoubleLinkedList for DoubleLinkedList.List;

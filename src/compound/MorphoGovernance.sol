@@ -1,7 +1,8 @@
-// SPDX-License-Identifier: AGPL-3.0-only
+// SPDX-License-Identifier: GNU AGPLv3
 pragma solidity 0.8.13;
 
 import "./MorphoUtils.sol";
+import "@forge-std/console.sol";
 
 /// @title MorphoGovernance.
 /// @author Morpho Labs.
@@ -439,7 +440,9 @@ abstract contract MorphoGovernance is MorphoUtils {
 
         address[] memory marketToEnter = new address[](1);
         marketToEnter[0] = _poolToken;
+        console.log("createMarket:",address(comptroller),_poolToken,address(this));
         uint256[] memory results = comptroller.enterMarkets(marketToEnter);
+        console.log("createMarket:results:",results[0]);
         if (results[0] != 0) revert MarketCreationFailedOnCompound();
 
         // Same initial index as Compound.

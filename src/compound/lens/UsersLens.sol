@@ -1,7 +1,8 @@
-// SPDX-License-Identifier: AGPL-3.0-only
+// SPDX-License-Identifier: GNU AGPLv3
 pragma solidity 0.8.13;
 
 import "./IndexesLens.sol";
+import "@forge-std/console.sol";
 
 /// @title UsersLens.
 /// @author Morpho Labs.

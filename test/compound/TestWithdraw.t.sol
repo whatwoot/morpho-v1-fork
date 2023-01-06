@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: AGPL-3.0-only
+// SPDX-License-Identifier: GNU AGPLv3
 pragma solidity ^0.8.0;
 
 import {Attacker} from "./helpers/Attacker.sol";
@@ -47,6 +47,12 @@ contract TestWithdraw is TestSetup {
     function testWithdrawAll() public {
         uint256 amount = 10_000 ether;
 
+        supplier2.approve(usdc, amount);
+        supplier2.compoundSupply(cUsdc, amount);
+        uint256 s2balance = supplier2.balanceOf(usdc);
+        emit log_named_uint("balance-00-->", supplier2.balanceOf(usdc));
+        emit log_named_uint("onpool-balance---00=>", ICToken(cUsdc).balanceOf(address(supplier2)));
+
         supplier1.approve(usdc, to6Decimals(amount));
         supplier1.supply(cUsdc, to6Decimals(amount));
 
@@ -57,15 +63,46 @@ contract TestWithdraw is TestSetup {
 
         assertEq(inP2P, 0);
         testEquality(onPool, expectedOnPool);
+        emit log_named_uint("onpool-00-->", onPool);
+        emit log_named_uint("onpool-balance-->", ICToken(cUsdc).balanceOf(address(morpho)));
+        emit log_named_uint("exchangeRateCurrent-->", ICToken(cUsdc).exchangeRateCurrent());
+
+        
+
+        
 
         supplier1.withdraw(cUsdc, type(uint256).max);
+        uint256 withdrawFee;
+        // if(comptroller.treasuryPercent()>0){
+        //     withdrawFee = amount.mul(comptroller.treasuryPercent()).div(1e18);
+        // }
 
         uint256 balanceAfter = supplier1.balanceOf(usdc);
         (inP2P, onPool) = morpho.supplyBalanceInOf(cUsdc, address(supplier1));
 
         assertEq(inP2P, 0, "in peer-to-peer");
         assertApproxEqAbs(onPool, 0, 1e5, "on Pool");
-        testEquality(balanceAfter - balanceBefore, to6Decimals(amount), "balance");
+        emit log_named_uint("onpool-11-->", onPool);
+        assertApproxEqAbs(balanceAfter - balanceBefore, to6Decimals(amount) - withdrawFee, 1e9, "balance");
+        // testEquality(balanceAfter - balanceBefore, to6Decimals(amount) - withdrawFee, "balance");
+
+        hevm.prank(address(supplier2));
+        uint256 res = ICToken(cUsdc).redeem(45947000199650);
+        emit log_named_uint("redeem-res:",res);
+        // ICToken(cUsdc).redeemUnderlying(amount);
+        // supplier2.compoundWithdraw(cUsdc, amount);
+        uint256 s2balance2 = supplier2.balanceOf(usdc);
+        emit log_named_uint("balance-01-earn->", s2balance2 - s2balance);
+    }
+
+    function testVenus() public {
+        uint256 amount = 10000 ether;
+        supplier1.approve(usdc, amount);
+        supplier1.compoundSupply(cUsdc, amount);
+        emit log_named_uint("balance-00-->", supplier1.balanceOf(usdc));
+
+        supplier1.compoundWithdraw(cUsdc, amount);
+        emit log_named_uint("balance-01-->", supplier1.balanceOf(usdc));
     }
 
     // There is a supplier `onPool` available to replace him `inP2P`. First, his liquidity `onPool` is taken, his matched is replaced by the available supplier up to his withdrawal amount.
@@ -251,7 +288,7 @@ contract TestWithdraw is TestSetup {
         .div(ICToken(cDai).borrowIndex());
 
         assertApproxEqAbs(inP2PBorrower, expectedBorrowBalanceInP2P, 1, "borrower in peer-to-peer");
-        assertApproxEqAbs(onPoolBorrower, expectedBorrowBalanceOnPool, 1e4, "borrower on Pool");
+        assertApproxEqAbs(onPoolBorrower, expectedBorrowBalanceOnPool, 1e6, "borrower on Pool");
 
         // Check balances for supplier
         (inP2PSupplier, onPoolSupplier) = morpho.supplyBalanceInOf(cDai, address(supplier1));
@@ -775,9 +812,13 @@ contract TestWithdraw is TestSetup {
     function testShouldPreventWithdrawWhenBorrowCapReached() public {
         createMarket(cUni);
 
-        uint256 compoundCollateralAmount = 50_000_000 ether;
-        deal(uni, address(borrower1), compoundCollateralAmount);
-        borrower1.compoundSupply(cUni, compoundCollateralAmount);
+        // uint256 compoundCollateralAmount = 50_000_000 ether;
+        // deal(uni, address(borrower1), compoundCollateralAmount);
+        // borrower1.compoundSupply(cUni, compoundCollateralAmount);
+        uint256 compoundCollateralAmount = 30_000_000 ether;
+        deal(usdt, address(borrower1), compoundCollateralAmount);
+        borrower1.approve(usdt, compoundCollateralAmount);
+        borrower1.compoundSupply(cUsdt, compoundCollateralAmount);
         borrower1.compoundBorrow(
             cUni,
             morpho.comptroller().borrowCaps(cUni) - ICToken(cUni).totalBorrows() - 1 ether

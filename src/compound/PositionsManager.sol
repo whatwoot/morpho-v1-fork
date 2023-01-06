@@ -1,10 +1,11 @@
-// SPDX-License-Identifier: AGPL-3.0-only
+// SPDX-License-Identifier: GNU AGPLv3
 pragma solidity 0.8.13;
 
 import "./interfaces/IPositionsManager.sol";
 import "./interfaces/IWETH.sol";
 
 import "./MatchingEngine.sol";
+
 
 /// @title PositionsManager.
 /// @author Morpho Labs.
@@ -598,9 +599,7 @@ contract PositionsManager is IPositionsManager, MatchingEngine {
         vars.remainingToWithdraw = _amount;
         vars.remainingGasForMatching = _maxGasForMatching;
         vars.poolSupplyIndex = ICToken(_poolToken).exchangeRateStored(); // Exchange rate has already been updated.
-
         if (_amount.div(vars.poolSupplyIndex) == 0) revert WithdrawTooSmall();
-
         Types.SupplyBalance storage supplierSupplyBalance = supplyBalanceInOf[_poolToken][
             _supplier
         ];

@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: AGPL-3.0-only
+// SPDX-License-Identifier: GNU AGPLv3
 pragma solidity 0.8.13;
 
 import "./interfaces/IIncentivesVault.sol";
@@ -140,7 +140,7 @@ contract IncentivesVault is IIncentivesVault, Ownable {
         if (msg.sender != address(morpho)) revert OnlyMorpho();
         if (isPaused) revert VaultIsPaused();
         // Transfer COMP to the DAO.
-        ERC20(comptroller.getCompAddress()).safeTransferFrom(
+        ERC20(comptroller.getXVSAddress()).safeTransferFrom(
             msg.sender,
             incentivesTreasuryVault,
             _amount

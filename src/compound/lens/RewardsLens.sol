@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: AGPL-3.0-only
+// SPDX-License-Identifier: GNU AGPLv3
 pragma solidity 0.8.13;
 
 import "./MarketsLens.sol";
@@ -128,12 +128,12 @@ abstract contract RewardsLens is MarketsLens {
 
         if (localSupplyState.block == block.number) return localSupplyState.index;
         else {
-            IComptroller.CompMarketState memory supplyState = comptroller.compSupplyState(
+            IComptroller.CompMarketState memory supplyState = comptroller.venusSupplyState(
                 _poolToken
             );
 
             uint256 deltaBlocks = block.number - supplyState.block;
-            uint256 supplySpeed = comptroller.compSupplySpeeds(_poolToken);
+            uint256 supplySpeed = comptroller.venusSpeeds(_poolToken);
 
             if (deltaBlocks > 0 && supplySpeed > 0) {
                 uint256 supplyTokens = ICToken(_poolToken).totalSupply();
@@ -157,11 +157,11 @@ abstract contract RewardsLens is MarketsLens {
 
         if (localBorrowState.block == block.number) return localBorrowState.index;
         else {
-            IComptroller.CompMarketState memory borrowState = comptroller.compBorrowState(
+            IComptroller.CompMarketState memory borrowState = comptroller.venusBorrowState(
                 _poolToken
             );
             uint256 deltaBlocks = block.number - borrowState.block;
-            uint256 borrowSpeed = comptroller.compBorrowSpeeds(_poolToken);
+            uint256 borrowSpeed = comptroller.venusSpeeds(_poolToken);
 
             if (deltaBlocks > 0 && borrowSpeed > 0) {
                 uint256 borrowAmount = ICToken(_poolToken).totalBorrows().div(
