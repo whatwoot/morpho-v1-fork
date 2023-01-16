@@ -33,7 +33,7 @@ contract Deploy is Script, Config {
     IIncentivesVault public incentivesVault;
     RewardsManager public rewardsManager;
 
-    function run_1() external {
+    function run() external {
         console.log("chain:", block.chainid);
         vm.label(comptroller, "Comptroller");
         vm.label(cDai, "cDAI");
@@ -105,6 +105,10 @@ contract Deploy is Script, Config {
         // morpho.createMarket(cWbtc2, defaultMarketParameters);
         // morpho.createMarket(cBat, defaultMarketParameters);
 
+        //rewards
+        MorphoToken morphoToken = new MorphoToken(0xF08910aff16cE891591943E13f777C70A8E4d222);
+        RewardsDistributor rewardsDistributor = new RewardsDistributor(address(morphoToken));
+
         vm.stopBroadcast();
     }
 
@@ -128,18 +132,6 @@ contract Deploy is Script, Config {
             TransparentUpgradeableProxy(payable(0x833d75776A866f72E43D569592ACBE79d2F14513)),
             address(lensImpl)
         );
-        vm.stopBroadcast();
-    }
-
-    //rewards
-    function run() external {
-        console.log("chain:", block.chainid);
-        vm.label(cDai, "cDAI");
-
-        uint256 deployerPrivateKey = vm.envUint("DEPLOYER_PRIVATE_KEY");
-        vm.startBroadcast(deployerPrivateKey);
-        MorphoToken morphoToken = new MorphoToken(0xF08910aff16cE891591943E13f777C70A8E4d222);
-        RewardsDistributor rewardsDistributor = new RewardsDistributor(address(morphoToken));
         vm.stopBroadcast();
     }
 }
