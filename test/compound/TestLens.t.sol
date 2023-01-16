@@ -698,7 +698,12 @@ contract TestLens is TestSetup {
         expectedStates.debtValue += getBalanceOnCompound(toBorrow, ICToken(cUsdt).borrowIndex())
         .mul(oracle.getUnderlyingPrice(cUsdt));
 
-        assertApproxEqAbs(states.collateralValue, expectedStates.collateralValue, 1e9, "Collateral Value");
+        assertApproxEqAbs(
+            states.collateralValue,
+            expectedStates.collateralValue,
+            1e9,
+            "Collateral Value"
+        );
         assertApproxEqAbs(states.debtValue, expectedStates.debtValue, 1e9, "Debt Value");
         assertApproxEqAbs(states.maxDebtValue, expectedStates.maxDebtValue, 1e9, "Max Debt Value");
     }
@@ -1148,7 +1153,7 @@ contract TestLens is TestSetup {
         uint256 amount = 10_000 ether;
 
         SimplePriceOracle oracle = createAndSetCustomPriceOracle();
-        oracle.setUnderlyingPrice(cUsdc, 1e18);//1e30);
+        oracle.setUnderlyingPrice(cUsdc, 1e18); //1e30);
         oracle.setUnderlyingPrice(cDai, 1e18);
 
         borrower1.approve(usdc, to6Decimals(2 * amount));
@@ -1170,7 +1175,7 @@ contract TestLens is TestSetup {
         );
 
         // assertEq(borrower2HealthFactor, 1e18);
-        assertApproxEqAbs(borrower2HealthFactor, 1e18,1);
+        assertApproxEqAbs(borrower2HealthFactor, 1e18, 1);
     }
 
     function testHealthFactorEqual1WhenBorrowingMaxCapacity() public {
@@ -1282,7 +1287,7 @@ contract TestLens is TestSetup {
 
         borrower1.approve(usdc, to6Decimals(amount));
         borrower1.supply(cUsdc, to6Decimals(amount));
-        borrower1.borrow(cDai, amount.mul(collateralFactor));// - 10 ether);
+        borrower1.borrow(cDai, amount.mul(collateralFactor)); // - 10 ether);
 
         address[] memory updatedMarkets = new address[](2);
         assertFalse(
@@ -1322,16 +1327,24 @@ contract TestLens is TestSetup {
 
         borrower1.approve(usdc, to6Decimals(amount));
         borrower1.supply(cUsdc, to6Decimals(amount));
-        borrower1.borrow(cDai, amount.mul(collateralFactor));// + 2.82e18);
+        borrower1.borrow(cDai, amount.mul(collateralFactor)); // + 2.82e18);
 
         address[] memory updatedMarkets = new address[](2);
         assertFalse(
             lens.isLiquidatable(address(borrower1), updatedMarkets),
             "borrower is already liquidatable"
         );
-        console.log("borrowBalance-1:%s   %s",ICToken(cDai).borrowBalanceStored(address(morpho)),ICToken(cDai).borrowBalanceCurrent(address(morpho)));
+        console.log(
+            "borrowBalance-1:%s   %s",
+            ICToken(cDai).borrowBalanceStored(address(morpho)),
+            ICToken(cDai).borrowBalanceCurrent(address(morpho))
+        );
         hevm.roll(block.number + (310 * 24 * 60 * 4));
-        console.log("borrowBalance-2:%s   %s",ICToken(cDai).borrowBalanceStored(address(morpho)),ICToken(cDai).borrowBalanceStored(address(morpho)));
+        console.log(
+            "borrowBalance-2:%s   %s",
+            ICToken(cDai).borrowBalanceStored(address(morpho)),
+            ICToken(cDai).borrowBalanceStored(address(morpho))
+        );
         assertFalse(
             lens.isLiquidatable(address(borrower1), updatedMarkets),
             "borrower is already liquidatable"
@@ -1358,8 +1371,8 @@ contract TestLens is TestSetup {
         uint256 collateralPrice = uint256(_collateralPrice) + 1;
 
         // this is necessary to avoid compound reverting redeem because amount in USD is near zero
-        supplier2.approve(usdc, 100e18);//100e6);
-        supplier2.supply(cUsdc, 100e18);//100e6);
+        supplier2.approve(usdc, 100e18); //100e6);
+        supplier2.supply(cUsdc, 100e18); //100e6);
 
         uint256 balanceBefore = ERC20(dai).balanceOf(address(supplier1));
 
@@ -1390,9 +1403,7 @@ contract TestLens is TestSetup {
             supplier1.approve(usdc, type(uint256).max);
 
             do {
-                emit log_named_uint("00000000000111111111111: ",toRepay);
                 supplier1.liquidate(cUsdc, cDai, address(borrower1), toRepay);
-                emit log("000000000002222222222222");
                 assertGt(
                     ERC20(dai).balanceOf(address(supplier1)),
                     balanceBefore,
@@ -1681,7 +1692,12 @@ contract TestLens is TestSetup {
             1,
             "unexpected total p2p borrow"
         );
-        assertApproxEqAbs(amounts.totalPoolBorrow, expectedDaiUSDOnPool, 1, "unexpected total pool borrow");
+        assertApproxEqAbs(
+            amounts.totalPoolBorrow,
+            expectedDaiUSDOnPool,
+            1,
+            "unexpected total pool borrow"
+        );
 
         assertApproxEqAbs(
             amounts.daiP2PSupply,
@@ -1696,7 +1712,12 @@ contract TestLens is TestSetup {
             "unexpected dai p2p borrow"
         );
         assertEq(amounts.daiPoolSupply, 0, "unexpected dai pool supply");
-        assertApproxEqAbs(amounts.daiPoolBorrow, expectedDaiUSDOnPool, 1, "unexpected dai pool borrow");
+        assertApproxEqAbs(
+            amounts.daiPoolBorrow,
+            expectedDaiUSDOnPool,
+            1,
+            "unexpected dai pool borrow"
+        );
 
         assertEq(amounts.ethP2PSupply, 0, "unexpected eth p2p supply");
         assertEq(amounts.ethP2PBorrow, 0, "unexpected eth p2p borrow");

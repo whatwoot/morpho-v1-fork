@@ -2,7 +2,6 @@
 pragma solidity 0.8.13;
 
 import "./IndexesLens.sol";
-import "@forge-std/console.sol";
 
 /// @title UsersLens.
 /// @author Morpho Labs.

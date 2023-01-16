@@ -80,10 +80,12 @@ contract TestLifecycle is TestSetup {
         (, supply.poolSupplyIndex, supply.poolBorrowIndex) = morpho.lastPoolIndexes(
             _market.poolToken
         );
+
         (supply.scaledP2PBalance, supply.scaledPoolBalance) = morpho.supplyBalanceInOf(
             _market.poolToken,
             address(user)
         );
+
         supply.position.p2p = supply.scaledP2PBalance.mul(supply.p2pSupplyIndex);
         supply.position.pool = supply.scaledPoolBalance.mul(supply.poolSupplyIndex);
         supply.position.total = supply.position.p2p + supply.position.pool;
@@ -183,7 +185,9 @@ contract TestLifecycle is TestSetup {
         borrow = _initMarketSideTest(_market, _amount);
 
         _beforeBorrow(borrow);
+
         user.borrow(_market.poolToken, borrow.amount);
+
         borrow.p2pSupplyIndex = morpho.p2pSupplyIndex(_market.poolToken);
         borrow.p2pBorrowIndex = morpho.p2pBorrowIndex(_market.poolToken);
         (, borrow.poolSupplyIndex, borrow.poolBorrowIndex) = morpho.lastPoolIndexes(
@@ -283,12 +287,7 @@ contract TestLifecycle is TestSetup {
     function _repay(MarketSideTest memory borrow) internal virtual {
         (borrow.position.p2p, borrow.position.pool, borrow.position.total) = lens
         .getCurrentBorrowBalanceInOf(borrow.market.poolToken, address(user));
-        console.log("_repay::", borrow.position.p2p, borrow.position.pool);
-        console.log(
-            "_repay::",
-            borrow.position.total,
-            ERC20(borrow.market.underlying).balanceOf(address(user))
-        );
+
         _tip(
             borrow.market.underlying,
             address(user),
@@ -391,6 +390,7 @@ contract TestLifecycle is TestSetup {
                 ++borrowMarketIndex
             ) {
                 _revert();
+
                 TestMarket memory supplyMarket = collateralMarkets[supplyMarketIndex];
                 TestMarket memory borrowMarket = borrowableMarkets[borrowMarketIndex];
 
@@ -409,18 +409,14 @@ contract TestLifecycle is TestSetup {
                 ).mul(1.001 ether);
 
                 MarketSideTest memory supply = _supply(supplyMarket, supplyAmount);
-                console.log("testsupply------");
                 _testSupply(supply);
 
                 if (!borrowMarket.status.isBorrowPaused) {
                     MarketSideTest memory borrow = _borrow(borrowMarket, borrowAmount);
-                    console.log("_testBorrow------");
                     _testBorrow(borrow);
-                    console.log("_testBorrow------222");
 
                     if (!borrowMarket.status.isRepayPaused) {
                         _repay(borrow);
-                        console.log("_testRepay------");
                         _testRepay(borrow);
                     }
                 }
@@ -428,7 +424,6 @@ contract TestLifecycle is TestSetup {
                 if (supplyMarket.status.isWithdrawPaused) continue;
 
                 _withdraw(supply);
-                console.log("_testWithdraw------");
                 _testWithdraw(supply);
             }
         }

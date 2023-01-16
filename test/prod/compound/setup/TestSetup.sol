@@ -191,12 +191,6 @@ contract TestSetup is Config, Test {
         uint96 _amount,
         uint256 _price
     ) internal view returns (uint256) {
-        console.log("_boundBorrowAmount:", _market.underlying, cEth.balance);
-        if (_market.underlying != wEth)
-            console.log(
-                "_boundBorrowAmount:bep20.balance=",
-                ERC20(_market.underlying).balanceOf(_market.poolToken)
-            );
         return
             bound(
                 _amount,

@@ -50,9 +50,6 @@ contract TestWithdraw is TestSetup {
         supplier2.approve(usdc, amount);
         supplier2.compoundSupply(cUsdc, amount);
         uint256 s2balance = supplier2.balanceOf(usdc);
-        emit log_named_uint("balance-00-->", supplier2.balanceOf(usdc));
-        emit log_named_uint("onpool-balance---00=>", ICToken(cUsdc).balanceOf(address(supplier2)));
-
         supplier1.approve(usdc, to6Decimals(amount));
         supplier1.supply(cUsdc, to6Decimals(amount));
 
@@ -63,13 +60,6 @@ contract TestWithdraw is TestSetup {
 
         assertEq(inP2P, 0);
         testEquality(onPool, expectedOnPool);
-        emit log_named_uint("onpool-00-->", onPool);
-        emit log_named_uint("onpool-balance-->", ICToken(cUsdc).balanceOf(address(morpho)));
-        emit log_named_uint("exchangeRateCurrent-->", ICToken(cUsdc).exchangeRateCurrent());
-
-        
-
-        
 
         supplier1.withdraw(cUsdc, type(uint256).max);
         uint256 withdrawFee;
@@ -82,13 +72,17 @@ contract TestWithdraw is TestSetup {
 
         assertEq(inP2P, 0, "in peer-to-peer");
         assertApproxEqAbs(onPool, 0, 1e5, "on Pool");
-        emit log_named_uint("onpool-11-->", onPool);
-        assertApproxEqAbs(balanceAfter - balanceBefore, to6Decimals(amount) - withdrawFee, 1e9, "balance");
+        assertApproxEqAbs(
+            balanceAfter - balanceBefore,
+            to6Decimals(amount) - withdrawFee,
+            1e9,
+            "balance"
+        );
         // testEquality(balanceAfter - balanceBefore, to6Decimals(amount) - withdrawFee, "balance");
 
         hevm.prank(address(supplier2));
         uint256 res = ICToken(cUsdc).redeem(45947000199650);
-        emit log_named_uint("redeem-res:",res);
+        emit log_named_uint("redeem-res:", res);
         // ICToken(cUsdc).redeemUnderlying(amount);
         // supplier2.compoundWithdraw(cUsdc, amount);
         uint256 s2balance2 = supplier2.balanceOf(usdc);

@@ -223,7 +223,9 @@ interface IComptroller {
     function venusSpeeds(address) external view returns (uint256);
 
     function venusSupplySpeeds(address) external view returns (uint256);
+
     function venusBorrowSpeeds(address) external view returns (uint256);
+
     function actionPaused(address market, uint256 action) external view returns (bool);
 
     // function venusSpeeds(address) external view returns (uint256);
@@ -249,13 +251,10 @@ interface IComptroller {
     function _setCollateralFactor(ICToken cToken, uint256 newCollateralFactorMantissa)
         external
         returns (uint256);
-    function _setVenusSpeed(ICToken cToken, uint venusSpeed) external;
-    // function _setCompSpeeds(
-    //     ICToken[] memory cTokens,
-    //     uint256[] memory supplySpeeds,
-    //     uint256[] memory borrowSpeeds
-    // ) external;
-    function treasuryPercent() external view returns (uint);
+
+    function _setVenusSpeed(ICToken cToken, uint256 venusSpeed) external;
+
+    function treasuryPercent() external view returns (uint256);
 }
 
 interface IInterestRateModel {
@@ -346,7 +345,7 @@ interface ICToken {
 
     function redeemUnderlying(uint256) external returns (uint256);
 
-    function redeem(uint redeemTokens) external returns (uint);
+    function redeem(uint256 redeemTokens) external returns (uint256);
 
     function accrueInterest() external returns (uint256);
 

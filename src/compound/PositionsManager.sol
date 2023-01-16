@@ -6,7 +6,6 @@ import "./interfaces/IWETH.sol";
 
 import "./MatchingEngine.sol";
 
-
 /// @title PositionsManager.
 /// @author Morpho Labs.
 /// @custom:contact security@morpho.xyz
@@ -599,7 +598,9 @@ contract PositionsManager is IPositionsManager, MatchingEngine {
         vars.remainingToWithdraw = _amount;
         vars.remainingGasForMatching = _maxGasForMatching;
         vars.poolSupplyIndex = ICToken(_poolToken).exchangeRateStored(); // Exchange rate has already been updated.
+
         if (_amount.div(vars.poolSupplyIndex) == 0) revert WithdrawTooSmall();
+
         Types.SupplyBalance storage supplierSupplyBalance = supplyBalanceInOf[_poolToken][
             _supplier
         ];
