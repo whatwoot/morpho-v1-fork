@@ -14,38 +14,38 @@ import {RewardsManager} from "src/compound/RewardsManager.sol";
 import {Lens} from "src/compound/lens/Lens.sol";
 import {Morpho} from "src/compound/Morpho.sol";
 
-interface IERC20{
-    function balanceOf(address) external returns ( uint256 );
+interface IERC20 {
+    function balanceOf(address) external returns (uint256);
 }
 
 contract Config {
-    address constant dai = 0x785e3f3379f02cfAA3bBB7504333A1E00da85E9e;//18
+    address constant dai = 0x785e3f3379f02cfAA3bBB7504333A1E00da85E9e; //18
     address constant aave = 0x34bF95ab803329343Fb3e945c33e02e18293990a;
     address constant usdc = 0x08D92102145be9D9f64Ee49ed1B26C688a9C27D3;
-    address constant wEth = 0xF64c84465282CDc15bC57388B1D599d78b8326D3;//wbnb
+    address constant wEth = 0xF64c84465282CDc15bC57388B1D599d78b8326D3; //wbnb
 
     // address constant cBat = 0x2fF3d0F6990a40261c66E1ff2017aCBc282EB6d0;
-    address constant cDai = 0x5bEaC3A30dd5011d8ae35A6732701D036Df4e249;
-    address constant cEth = 0x3E1a76bF7dAc221d9665924Ad2F925D2ea8f0fd8;//vBNB
-    address constant cAave = 0x4a4AfD0779eA0e781656fDf1192F701c87D68A5A;
-    address constant cRep = 0x26DA28954763B92139ED49283625ceCAf52C6f94;//caave
-    address constant cSai = 0x650b940a1033B8A1b1873f78730FcFC73ec11f1f;//cvlink
-    address constant cUsdc = 0x8d9C23687645ed2310E3DD062fF67D8Ef685B3D2;
+    address constant cDai = 0x8f07A18A114f29E34957b134e0260005b6bc003C;
+    address constant cEth = 0xb55fA0EF06d73ecA3A579341EfDc07f0808a1067; //vBNB
+    address constant cAave = 0x63E9a53BF7AD8eA8E047c3F7b5C48A6e69ab5109;
+    // address constant cRep = 0x26DA28954763B92139ED49283625ceCAf52C6f94;//caave
+    // address constant cSai = 0x650b940a1033B8A1b1873f78730FcFC73ec11f1f;//cvlink
+    address constant cUsdc = 0x249B5B6e907E78E78266230c5d65BCE1c0ce8841;
     // address constant cWbtc2 = 0x882C173bC7Ff3b7786CA16dfeD3DFFfb9Ee7847B;
     // address constant cZrx = 0xA253295eC2157B8b69C44b2cb35360016DAa25b1;
-    
+
     // uint256 balanceBefore = IERC20(dai).balanceOf(0x55d398326f99059fF775485246999027B3197955);
 
     address public morphoDao = 0xF08910aff16cE891591943E13f777C70A8E4d222;
-    IComptroller public comptroller = IComptroller(0x7C50CC8cccc5DE2B1eB92bC994fF0762303c65B0);
+    IComptroller public comptroller = IComptroller(0xc6C6117609E45c6B92db6942f7f98b77eCda46A8);
     ICompoundOracle public oracle = ICompoundOracle(comptroller.oracle());
 
-    ProxyAdmin public proxyAdmin = ProxyAdmin(0xf3a2599D90A69F296fC017F2dd701b00Ee3d209A);
+    ProxyAdmin public proxyAdmin = ProxyAdmin(0x914A42e4c6341edBc719e2518e942ee202EF5CA5);
 
     TransparentUpgradeableProxy public lensProxy =
-        TransparentUpgradeableProxy(payable(0x00108c97BD3B104A7541d3ECB5Ab181203c4aa6F));
+        TransparentUpgradeableProxy(payable(0x833d75776A866f72E43D569592ACBE79d2F14513));
     TransparentUpgradeableProxy public morphoProxy =
-        TransparentUpgradeableProxy(payable(0xb421df841324d3356c94383352c8F8fd3A59CcE9));
+        TransparentUpgradeableProxy(payable(0x098EA763E4B682a723DbfA7Cf19a35Fc22481633));
     TransparentUpgradeableProxy public rewardsManagerProxy;
 
     Lens public lensImplV1;

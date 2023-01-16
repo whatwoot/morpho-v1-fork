@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: AGPL-3.0-only
+// SPDX-License-Identifier: GNU AGPLv3
 pragma solidity ^0.8.0;
 
 import "src/compound/interfaces/IRewardsManager.sol";
@@ -47,7 +47,7 @@ contract User {
     }
 
     function compoundClaimRewards(address[] memory assets) external {
-        comptroller.claimComp(address(this), assets);
+        comptroller.claimVenus(address(this), assets);
     }
 
     function balanceOf(address _token) external view returns (uint256) {

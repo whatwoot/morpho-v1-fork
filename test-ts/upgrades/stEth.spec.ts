@@ -116,7 +116,7 @@ describe("Check ugprade", () => {
       await morpho.connect(signer).withdraw(aStEth, amount, { gasLimit: 3_000_000 });
 
       const balanceAfter = await stEth.balanceOf(user);
-
+      console.log("balancea:b:a:", balanceAfter, balanceBefore, amount);
       expect(balanceAfter.sub(balanceBefore).sub(amount).abs().lt(10)).to.be.true;
 
       await expect(morpho.connect(signer).withdraw(aStEth, 1_000, { gasLimit: 3_000_000 })).to.be.reverted;

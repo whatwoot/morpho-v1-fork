@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: AGPL-3.0-only
+// SPDX-License-Identifier: GNU AGPLv3
 pragma solidity ^0.8.0;
 
 import {CompoundMath} from "src/compound/libraries/CompoundMath.sol";
@@ -76,20 +76,20 @@ contract TestSetup is Config, Test {
         deal(aave, address(this), type(uint256).max);
         deal(dai, address(this), type(uint256).max);
         deal(usdc, address(this), type(uint256).max);
-        deal(usdt, address(this), type(uint256).max);
-        deal(wbtc, address(this), type(uint256).max);
+        // deal(usdt, address(this), type(uint256).max);
+        // deal(wbtc, address(this), type(uint256).max);
         deal(wEth, address(this), type(uint256).max);
-        deal(comp, address(this), type(uint256).max);
-        deal(bat, address(this), type(uint256).max);
-        deal(tusd, address(this), type(uint256).max);
-        deal(uni, address(this), type(uint256).max);
-        deal(zrx, address(this), type(uint256).max);
-        deal(link, address(this), type(uint256).max);
-        deal(mkr, address(this), type(uint256).max);
-        deal(fei, address(this), type(uint256).max);
-        deal(yfi, address(this), type(uint256).max);
-        deal(usdp, address(this), type(uint256).max);
-        deal(sushi, address(this), type(uint256).max);
+        // deal(comp, address(this), type(uint256).max);
+        // deal(bat, address(this), type(uint256).max);
+        // deal(tusd, address(this), type(uint256).max);
+        // deal(uni, address(this), type(uint256).max);
+        // deal(zrx, address(this), type(uint256).max);
+        // deal(link, address(this), type(uint256).max);
+        // deal(mkr, address(this), type(uint256).max);
+        // deal(fei, address(this), type(uint256).max);
+        // deal(yfi, address(this), type(uint256).max);
+        // deal(usdp, address(this), type(uint256).max);
+        // deal(sushi, address(this), type(uint256).max);
     }
 
     function setContractsLabels() internal {
@@ -106,38 +106,38 @@ contract TestSetup is Config, Test {
         vm.label(address(aave), "AAVE");
         vm.label(address(dai), "DAI");
         vm.label(address(usdc), "USDC");
-        vm.label(address(usdt), "USDT");
-        vm.label(address(wbtc), "WBTC");
+        // vm.label(address(usdt), "USDT");
+        // vm.label(address(wbtc), "WBTC");
         vm.label(address(wEth), "WETH");
-        vm.label(address(comp), "COMP");
-        vm.label(address(bat), "BAT");
-        vm.label(address(tusd), "TUSD");
-        vm.label(address(uni), "UNI");
-        vm.label(address(zrx), "ZRX");
-        vm.label(address(link), "LINK");
-        vm.label(address(mkr), "MKR");
-        vm.label(address(fei), "FEI");
-        vm.label(address(yfi), "YFI");
-        vm.label(address(usdp), "USDP");
-        vm.label(address(sushi), "SUSHI");
+        // vm.label(address(comp), "COMP");
+        // vm.label(address(bat), "BAT");
+        // vm.label(address(tusd), "TUSD");
+        // vm.label(address(uni), "UNI");
+        // vm.label(address(zrx), "ZRX");
+        // vm.label(address(link), "LINK");
+        // vm.label(address(mkr), "MKR");
+        // vm.label(address(fei), "FEI");
+        // vm.label(address(yfi), "YFI");
+        // vm.label(address(usdp), "USDP");
+        // vm.label(address(sushi), "SUSHI");
 
         vm.label(address(cAave), "cAAVE");
         vm.label(address(cDai), "cDAI");
         vm.label(address(cUsdc), "cUSDC");
-        vm.label(address(cUsdt), "cUSDT");
-        vm.label(address(cWbtc2), "cWBTC");
+        // vm.label(address(cUsdt), "cUSDT");
+        // vm.label(address(cWbtc2), "cWBTC");
         vm.label(address(cEth), "cWETH");
-        vm.label(address(cComp), "cCOMP");
-        vm.label(address(cBat), "cBAT");
-        vm.label(address(cTusd), "cTUSD");
-        vm.label(address(cUni), "cUNI");
-        vm.label(address(cZrx), "cZRX");
-        vm.label(address(cLink), "cLINK");
-        vm.label(address(cMkr), "cMKR");
-        vm.label(address(cFei), "cFEI");
-        vm.label(address(cYfi), "cYFI");
-        vm.label(address(cUsdp), "cUSDP");
-        vm.label(address(cSushi), "cSUSHI");
+        // vm.label(address(cComp), "cCOMP");
+        // vm.label(address(cBat), "cBAT");
+        // vm.label(address(cTusd), "cTUSD");
+        // vm.label(address(cUni), "cUNI");
+        // vm.label(address(cZrx), "cZRX");
+        // vm.label(address(cLink), "cLINK");
+        // vm.label(address(cMkr), "cMKR");
+        // vm.label(address(cFei), "cFEI");
+        // vm.label(address(cYfi), "cYFI");
+        // vm.label(address(cUsdp), "cUSDP");
+        // vm.label(address(cSushi), "cSUSHI");
     }
 
     function _initMarkets() internal {
@@ -147,7 +147,6 @@ contract TestSetup is Config, Test {
             address poolToken = createdMarkets[i];
             address underlying = _getUnderlying(poolToken);
             string memory symbol = ERC20(poolToken).symbol();
-
             TestMarket memory market = TestMarket({
                 poolToken: poolToken,
                 underlying: underlying,
@@ -156,17 +155,15 @@ contract TestSetup is Config, Test {
                 collateralFactor: 0,
                 maxBorrows: comptroller.borrowCaps(poolToken),
                 totalBorrows: ICToken(poolToken).totalBorrows(),
-                mintGuardianPaused: comptroller.mintGuardianPaused(poolToken),
-                borrowGuardianPaused: comptroller.borrowGuardianPaused(poolToken),
+                mintGuardianPaused: false, //comptroller.actionPaused(poolToken,0),//mintGuardianPaused(poolToken),
+                borrowGuardianPaused: false, //comptroller.actionPaused(poolToken,2),//.borrowGuardianPaused(poolToken),
                 status: IMorpho(address(morpho)).marketPauseStatus(poolToken)
             });
-
             (, bool isPaused, bool isPartiallyPaused) = morpho.marketStatus(poolToken);
             (, market.collateralFactor, ) = comptroller.markets(poolToken);
             market.maxBorrows = market.maxBorrows == 0 ? type(uint256).max : market.maxBorrows;
 
             markets.push(market);
-
             if (!isPaused) {
                 unpausedMarkets.push(market);
 
@@ -194,6 +191,12 @@ contract TestSetup is Config, Test {
         uint96 _amount,
         uint256 _price
     ) internal view returns (uint256) {
+        console.log("_boundBorrowAmount:", _market.underlying, cEth.balance);
+        if (_market.underlying != wEth)
+            console.log(
+                "_boundBorrowAmount:bep20.balance=",
+                ERC20(_market.underlying).balanceOf(_market.poolToken)
+            );
         return
             bound(
                 _amount,

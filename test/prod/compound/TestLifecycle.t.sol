@@ -49,7 +49,7 @@ contract TestLifecycle is TestSetup {
 
         test.p2pDisabled = morpho.p2pDisabled(_market.poolToken);
         (test.p2pSupplyDelta, test.p2pBorrowDelta, , ) = morpho.deltas(_market.poolToken);
-        
+
         test.morphoPoolSupplyBefore = ICToken(_market.poolToken).balanceOfUnderlying(
             address(morpho)
         );
@@ -98,7 +98,7 @@ contract TestLifecycle is TestSetup {
         assertApproxEqAbs(
             supply.position.total,
             supply.amount,
-            supply.poolSupplyIndex.div(1e18)+1,//1,
+            supply.poolSupplyIndex.div(1e18) + 1, //1,
             string.concat(supply.market.symbol, " total supply")
         );
         if (supply.p2pDisabled)
@@ -143,7 +143,10 @@ contract TestLifecycle is TestSetup {
         );
         assertApproxEqAbs(
             ICToken(supply.market.poolToken).balanceOfUnderlying(address(morpho)),
-            supply.morphoPoolSupplyBefore + supply.scaledPoolBalance.mul(ICToken(supply.market.poolToken).exchangeRateCurrent()),//supply.position.pool,
+            supply.morphoPoolSupplyBefore +
+                supply.scaledPoolBalance.mul(
+                    ICToken(supply.market.poolToken).exchangeRateCurrent()
+                ), //supply.position.pool,
             10,
             string.concat(supply.market.symbol, " morpho pool supply")
         );
@@ -206,7 +209,7 @@ contract TestLifecycle is TestSetup {
         assertApproxEqAbs(
             borrow.position.total,
             borrow.amount,
-            borrow.p2pBorrowIndex.div(1e18)+1,//10,
+            borrow.p2pBorrowIndex.div(1e18) + 1, //10,
             string.concat(borrow.market.symbol, " total borrow")
         );
         if (borrow.p2pDisabled)
@@ -250,7 +253,7 @@ contract TestLifecycle is TestSetup {
             ICToken(borrow.market.poolToken).balanceOfUnderlying(address(morpho)) +
                 borrow.position.p2p,
             borrow.morphoPoolSupplyBefore,
-            borrow.p2pBorrowIndex.div(1e18)+1,//2,
+            borrow.p2pBorrowIndex.div(1e18) + 1, //2,
             string.concat(borrow.market.symbol, " morpho borrowed pool supply")
         );
         assertApproxEqAbs(
@@ -280,7 +283,12 @@ contract TestLifecycle is TestSetup {
     function _repay(MarketSideTest memory borrow) internal virtual {
         (borrow.position.p2p, borrow.position.pool, borrow.position.total) = lens
         .getCurrentBorrowBalanceInOf(borrow.market.poolToken, address(user));
-
+        console.log("_repay::", borrow.position.p2p, borrow.position.pool);
+        console.log(
+            "_repay::",
+            borrow.position.total,
+            ERC20(borrow.market.underlying).balanceOf(address(user))
+        );
         _tip(
             borrow.market.underlying,
             address(user),
@@ -401,14 +409,18 @@ contract TestLifecycle is TestSetup {
                 ).mul(1.001 ether);
 
                 MarketSideTest memory supply = _supply(supplyMarket, supplyAmount);
+                console.log("testsupply------");
                 _testSupply(supply);
 
                 if (!borrowMarket.status.isBorrowPaused) {
                     MarketSideTest memory borrow = _borrow(borrowMarket, borrowAmount);
+                    console.log("_testBorrow------");
                     _testBorrow(borrow);
+                    console.log("_testBorrow------222");
 
                     if (!borrowMarket.status.isRepayPaused) {
                         _repay(borrow);
+                        console.log("_testRepay------");
                         _testRepay(borrow);
                     }
                 }
@@ -416,6 +428,7 @@ contract TestLifecycle is TestSetup {
                 if (supplyMarket.status.isWithdrawPaused) continue;
 
                 _withdraw(supply);
+                console.log("_testWithdraw------");
                 _testWithdraw(supply);
             }
         }

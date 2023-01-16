@@ -85,7 +85,7 @@ contract TestSetup is Config, Utils {
 
         createMarket(cDai);
         createMarket(cUsdc);
-        createMarket(cWbtc2);
+        // createMarket(cWbtc2);
         createMarket(cUsdt);
         createMarket(cBat);
         createMarket(cEth);
@@ -168,8 +168,8 @@ contract TestSetup is Config, Utils {
         deal(dai, address(_user), INITIAL_BALANCE * WAD);
         deal(wEth, address(_user), INITIAL_BALANCE * WAD);
         deal(bat, address(_user), INITIAL_BALANCE * WAD);
-        deal(usdt, address(_user), INITIAL_BALANCE * WAD);//1e6);
-        deal(usdc, address(_user), INITIAL_BALANCE * WAD);//1e6);
+        deal(usdt, address(_user), INITIAL_BALANCE * WAD); //1e6);
+        deal(usdc, address(_user), INITIAL_BALANCE * WAD); //1e6);
     }
 
     function setContractsLabels() internal {
